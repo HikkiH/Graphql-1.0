@@ -1,5 +1,8 @@
 const Query = {
-  hello: (parent, AbortSignal, cotext) => 'Hello'
+  hello: (parent, args, context) => {
+    console.log(context)
+    return 'Helllooooooo'
+  }
 };
 
 module.exports = {
