@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
@@ -10,50 +10,39 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-export default class index extends Component {
-  state = {
-    email: "",
-    password: ""
-  };
+export default function Login(props) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  render() {
-    const { email, password } = this.state;
-    return (
+  return (
+    <div>
       <div>
-        <div>
-          <input
-            value={email}
-            onChange={e => this.setState({ email: e.target.value })}
-            type="text"
-            placeholder="Your email address"
-          />
-          <input
-            value={password}
-            onChange={e => this.setState({ password: e.target.value })}
-            type="password"
-            placeholder="password"
-          />
-        </div>
-        <div>
-          <Mutation
-            mutation={LOGIN_MUTATION}
-            variables={{ email, password }}
-            onCompleted={data => this._confirm(data)}
-          >
-            {mutation => <button onClick={mutation}>Login</button>}
-          </Mutation>
-        </div>
+        <input
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          type="text"
+          placeholder="Your email address"
+        />
+        <input
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          type="password"
+          placeholder="password"
+        />
       </div>
-    );
-  }
-
-  _confirm = async data => {
-    const { token } = data.login;
-    this._saveUserData(token);
-    this.props.history.push(`/`);
-  };
-
-  _saveUserData = token => {
-    localStorage.setItem("token", token);
-  };
+      <div>
+        <Mutation
+          mutation={LOGIN_MUTATION}
+          variables={{ email, password }}
+          onCompleted={data => {
+            const { token } = data.login;
+            localStorage.setItem("token", token);
+            props.history.push(`/`);
+          }}
+        >
+          {mutation => <button onClick={mutation}>Login</button>}
+        </Mutation>
+      </div>
+    </div>
+  );
 }
