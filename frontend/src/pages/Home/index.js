@@ -12,18 +12,34 @@ const ME_QUERY = gql`
   }
 `;
 
-function Home() {
+function Home(props) {
+  const authToken = localStorage.getItem("token");
+  console.log(authToken);
   return (
     <div>
       <h1>Home Page</h1>
-      <Query query={ME_QUERY}>
-        {({ data, error, loading }) => {
-          if (loading) return <p>Loading...</p>;
-          if (error) return <Link to="/login">Login</Link>;
+      {authToken && (
+        <div>
+          <button
+            onClick={() => {
+              localStorage.removeItem("token");
 
-          return <p>{data.me.email}</p>;
-        }}
-      </Query>
+              props.history.push("/");
+            }}
+          >
+            Logout
+          </button>
+          <Query query={ME_QUERY}>
+            {({ data, error, loading }) => {
+              if (loading) return <p>Loading...</p>;
+              if (error) return;
+
+              return <p>{data.me.email}</p>;
+            }}
+          </Query>
+        </div>
+      )}
+      {!authToken && <Link to="/login">Login</Link>}
     </div>
   );
 }
